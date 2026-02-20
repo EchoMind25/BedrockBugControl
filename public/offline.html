@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BCC — Offline</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f172a;
+      color: #94a3b8;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    .icon { font-size: 3rem; margin-bottom: 1rem; }
+    h1 { color: #f1f5f9; font-size: 1.25rem; margin-bottom: 0.5rem; }
+    p { font-size: 0.875rem; color: #64748b; max-width: 320px; }
+    button {
+      margin-top: 1.5rem;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      padding: 0.5rem 1.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    button:hover { background: #334155; color: #f1f5f9; }
+  </style>
+</head>
+<body>
+  <div class="icon">📡</div>
+  <h1>No connection</h1>
+  <p>Data will refresh automatically when you're back online.</p>
+  <button onclick="location.reload()">Try again</button>
+</body>
+</html>
