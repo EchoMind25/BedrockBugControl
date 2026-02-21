@@ -13,9 +13,9 @@ Bug reports flow like this to keep the BCC ingest key server-side:
 
 ```
 User submits widget
-  → Client POSTs to product's /api/report-bug  (no key, uses session auth)
-    → Product server POSTs to BCC /api/bcc/report  (with BCC_INGEST_KEY)
-      → BCC writes to its Supabase
+  → Client POSTs to product's /api/report-bug        (no key — uses session auth)
+      → Product server POSTs to BCC /api/bcc/report  (with BCC_INGEST_KEY)
+            → BCC writes to its Supabase
 ```
 
 ---
@@ -25,7 +25,7 @@ User submits widget
 ```env
 # In the product's .env.local (and in Vercel dashboard for that product)
 NEXT_PUBLIC_BCC_API_URL=https://bedrock-bcc.vercel.app
-BCC_INGEST_KEY=bcc_sk_...   # same key as BCC dashboard
+BCC_INGEST_KEY=bcc_sk_...   # same key as the BCC dashboard uses
 ```
 
 ---
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
 
 Copy `components/widget/BugReportWidget.tsx` from this repo into the product's `components/` directory.
 
-The widget has **zero external dependencies** at import time. `html2canvas` is lazy-loaded only when the user allows a screenshot.
+The widget has **zero external dependencies** at import time. `html2canvas` is lazy-loaded only when the user clicks "Allow Screenshot".
 
 ---
 
@@ -102,11 +102,13 @@ export default async function RootLayout({ children }) {
       <body>
         {children}
         <BugReportWidget
-          product="bedrock-chat"          // must match bcc_products.id in BCC Supabase
-          productName="Bedrock Chat"
+          product="bedrock-chat"                        // must match bcc_products.id in BCC Supabase
+          productName="Bedrock Chat"                    // shown in the success message
           userId={session?.user?.id ?? null}
           username={session?.user?.email ?? null}
+          isAuthenticated={!!session}                   // hides widget when not logged in
           appVersion={process.env.NEXT_PUBLIC_APP_VERSION}
+          theme={{ primaryColor: '#3b82f6' }}           // per-product accent color
         />
       </body>
     </html>
@@ -115,26 +117,39 @@ export default async function RootLayout({ children }) {
 ```
 
 **Product IDs** (must match exactly):
-| Product | `product` prop |
-|---------|---------------|
-| Bedrock Chat | `"bedrock-chat"` |
-| EchoSafe | `"echosafe"` |
-| QuoteFlow | `"quoteflow"` |
+| Product | `product` prop | Suggested accent color |
+|---------|---------------|----------------------|
+| Bedrock Chat | `"bedrock-chat"` | `#3b82f6` (blue) |
+| EchoSafe | `"echosafe"` | `#8b5cf6` (purple) |
+| QuoteFlow | `"quoteflow"` | `#10b981` (emerald) |
+
+### All widget props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `product` | `string` | — | **Required.** Product ID matching `bcc_products.id` |
+| `productName` | `string` | `"the product"` | Shown in success message |
+| `userId` | `string \| null` | `null` | From host app auth session |
+| `username` | `string \| null` | `null` | From host app auth session |
+| `appVersion` | `string` | — | App version string, e.g. `"1.2.0"` |
+| `isAuthenticated` | `boolean` | `true` | Widget renders `null` when `false` |
+| `theme.primaryColor` | `string` | `#3b82f6` | Hex accent color — buttons, selected states |
 
 ---
 
 ## Step 5 — Verify
 
-1. Load the product locally — you should see a small ⚠ button in the bottom-right corner
-2. Click it, fill in a bug report, submit
-3. Check the BCC dashboard at `https://bedrock-bcc.vercel.app/bugs` — it should appear within a few seconds
-4. For blocker bugs: check `braxton@bedrockai.systems` inbox for the email alert
+1. Load the product locally — you should see a bug icon button in the bottom-right corner
+2. Click it, complete the form, submit
+3. Check the BCC dashboard at `https://bedrock-bcc.vercel.app/bugs` — the report should appear within seconds
+4. For blocker bugs: check `braxton@bedrockai.systems` for the email alert
 
 ---
 
 ## Notes
 
-- The widget does **not** import BCC's Supabase client — it stays completely isolated
-- The `BCC_INGEST_KEY` stays server-side (never reaches the browser)
-- If the BCC API is down, the widget shows an error and keeps the form data so the user can retry
-- Z-index is set to 40/50 — adjust if your product uses higher z-index modals
+- The widget does **not** import BCC's Supabase client — it stays completely isolated from BCC internals
+- `BCC_INGEST_KEY` stays server-side and never reaches the browser
+- If screenshot upload fails, the report is still submitted without it
+- Console errors entered in the form are appended to `steps_to_reproduce` in the submitted payload
+- Z-index: trigger button is `z-40`, modal overlay is `z-50` — adjust if your product uses higher values
