@@ -24,7 +24,7 @@ User submits widget
 
 ```env
 # In the product's .env.local (and in Vercel dashboard for that product)
-NEXT_PUBLIC_BCC_API_URL=https://bedrock-bcc.vercel.app
+NEXT_PUBLIC_BCC_API_URL=https://bedrock-bug-control.vercel.app
 BCC_INGEST_KEY=bcc_sk_...   # same key as the BCC dashboard uses
 ```
 
@@ -141,7 +141,7 @@ export default async function RootLayout({ children }) {
 
 1. Load the product locally — you should see a bug icon button in the bottom-right corner
 2. Click it, complete the form, submit
-3. Check the BCC dashboard at `https://bedrock-bcc.vercel.app/bugs` — the report should appear within seconds
+3. Check the BCC dashboard at `https://bedrock-bug-control.vercel.app/bugs` — the report should appear within seconds
 4. For blocker bugs: check `braxton@bedrockai.systems` for the email alert
 
 ---

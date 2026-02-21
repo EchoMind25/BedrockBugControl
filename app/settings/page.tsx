@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { SettingsClient } from '@/components/settings/SettingsClient'
-import type { BccSetting } from '@/types'
+import type { BccSetting, BccProduct } from '@/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,6 +19,14 @@ export default async function SettingsPage() {
   const { data: spendData } = await supabase.rpc('get_monthly_api_spend')
   const monthlySpend: number = (spendData as number) ?? 0
 
+  // Fetch products for health endpoint configuration
+  const { data: productsData } = await supabase
+    .from('bcc_products')
+    .select('id, display_name, production_url, repo_url, health_endpoint, is_active')
+    .order('id')
+
+  const products: BccProduct[] = (productsData ?? []) as BccProduct[]
+
   return (
     <div className="p-4 md:p-6 max-w-3xl mx-auto">
       <div className="mb-6">
@@ -28,7 +36,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsClient settings={settings} monthlySpend={monthlySpend} />
+      <SettingsClient settings={settings} monthlySpend={monthlySpend} products={products} />
     </div>
   )
 }

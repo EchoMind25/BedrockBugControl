@@ -149,5 +149,5 @@ CREATE POLICY "Team can view bug screenshots"
 --    RESEND_API_KEY=re_...
 --
 -- 3. Add BCC_INGEST_KEY to each product's env:
---    NEXT_PUBLIC_BCC_API_URL=https://bedrock-bcc.vercel.app
+--    NEXT_PUBLIC_BCC_API_URL=https://bedrock-bug-control.vercel.app
 --    BCC_INGEST_KEY=bcc_sk_... (same key as above)

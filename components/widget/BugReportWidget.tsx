@@ -4,7 +4,7 @@
  * BugReportWidget.tsx — Drop this into any Bedrock AI product's root layout.
  *
  * Required env vars in the HOST PRODUCT (not BCC):
- *   NEXT_PUBLIC_BCC_API_URL=https://bedrock-bcc.vercel.app
+ *   NEXT_PUBLIC_BCC_API_URL=https://bedrock-bug-control.vercel.app
  *   BCC_INGEST_KEY=bcc_sk_...   (server-side only — kept in product's proxy routes)
  *
  * Mount once in root layout:
